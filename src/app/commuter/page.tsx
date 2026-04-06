@@ -68,6 +68,7 @@ export default function CommuterDashboard() {
   const isPending = userDoc?.status === "pending";
 
   return (
+<<<<<<< HEAD
     <RoleGuard allowedRoles={["commuter", "admin"]}>
       <div className="min-h-screen bg-zinc-900 text-white p-6 font-sans">
         <div className="flex justify-between items-center mb-8">
@@ -77,6 +78,34 @@ export default function CommuterDashboard() {
           <button onClick={handleLogout} className="text-zinc-500 text-xs font-bold uppercase tracking-widest hover:text-red-400">
             Sign Out
           </button>
+=======
+    <div className="min-h-screen bg-black text-white p-6 font-sans">
+      
+      {/* Top Navigation */}
+      <div className="flex justify-between items-center mb-8">
+        <Link href="/" className="text-emerald-500 text-xs font-bold uppercase tracking-widest hover:text-emerald-400">
+          ← Home
+        </Link>
+        <button onClick={handleLogout} className="text-zinc-500 text-xs font-bold uppercase tracking-widest hover:text-red-400 transition-colors">
+          Sign Out
+        </button>
+      </div>
+
+      <div className="mx-auto max-w-md space-y-4">
+        
+        {/* Profile Card */}
+        <div className="flex items-center gap-4 bg-zinc-900/50 p-5 rounded-2xl border border-zinc-800">
+          <div className="h-14 w-14 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-xl font-bold text-emerald-500">
+            {userDoc?.name?.charAt(0) || "U"}
+          </div>
+          <div>
+            <h2 className="font-bold text-white">{userDoc?.name || "Commuter"}</h2>
+            <p className="text-xs text-zinc-500">{userDoc?.phone || "No Phone Number"}</p>
+            <p className="text-xs text-zinc-500">{userDoc?.email || "No Email"}</p>
+            <p className="text-xs text-zinc-500">Role: {userDoc?.role || "No Role"}</p>
+            <p className="text-xs text-zinc-500">Institute: {userDoc?.college || "No College"}</p>
+          </div>
+>>>>>>> fbed95964c4aaeb73899e6884b05f0ce593153c2
         </div>
 
         <div className="mx-auto max-w-md space-y-4">
