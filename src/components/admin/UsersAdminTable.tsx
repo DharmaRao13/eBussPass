@@ -1,19 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { collection, doc, getDocs, updateDoc, getFirestore } from "firebase/firestore";
+import { collection, doc, getDocs, updateDoc, Timestamp } from "firebase/firestore";
 import type { UserProfile } from "@/types/ebuspass";
 import { getFirebaseDb } from "@/lib/firebase";
-import { Timestamp } from "firebase/firestore";
-
 
 export type UserRow = { id: string } & UserProfile;
 
-/**
- * Lists every document in `users` and allows setting `isActive: true`.
- * Requires Firestore rules that permit your admin user to read/update all `users/*`
- * (e.g. custom claim `admin == true` or a dedicated admin account during MVP).
- */
 export function UsersAdminTable() {
   const [users, setUsers] = useState<UserRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -34,9 +27,7 @@ export function UsersAdminTable() {
       setUsers(rows);
     } catch (e) {
       console.error(e);
-      setError(
-        "Could not load users. Check Firestore rules, network, and that you are signed in as an allowed admin.",
-      );
+      setError("Could not load users. Check Firestore rules and network.");
       setUsers([]);
     } finally {
       setLoading(false);
@@ -49,53 +40,26 @@ export function UsersAdminTable() {
 
   const toggleUserStatus = async (userId: string, currentStatus: boolean) => {
     setBusyIds((prev) => new Set(prev).add(userId));
-  
+
     try {
-      const db = getFirebaseDb(); // Use your custom DB connection
-      
-      // Create a date for 1 year from today
+      const db = getFirebaseDb();
       const futureDate = new Date();
       futureDate.setFullYear(futureDate.getFullYear() + 1);
-  
+
+      const newStatus = !currentStatus;
+
       await updateDoc(doc(db, "users", userId), {
-        isActive: !currentStatus,
-        // If we are activating, set a 1-year expiry. If deactivating, keep it.
-        expiryDate: !currentStatus ? Timestamp.fromDate(futureDate) : Timestamp.now(),
+        isActive: newStatus,
+        expiryDate: newStatus ? Timestamp.fromDate(futureDate) : Timestamp.now(),
       });
-  
+
       setUsers((prev) =>
-        prev.map((u) => (u.id === userId ? { ...u, isActive: !currentStatus } : u))
+        prev.map((u) => (u.id === userId ? { ...u, isActive: newStatus } : u))
       );
     } catch (error) {
       console.error(error);
       alert("Update failed!");
     } finally {
-      setBusyIds((prev) => {
-        const next = new Set(prev);
-        next.delete(userId);
-        return next;
-      });
-    }
-  };
-    try {
-      // 2. Update in Firebase
-      const db = getFirebaseDb(); 
-// Make sure getFirebaseDb is imported at the top!;
-      await updateDoc(doc(db, "users", userId), {
-        isActive: !currentStatus, // Flips true to false, or false to true
-      });
-
-      // 3. Update the local UI immediately
-      setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          user.id === userId ? { ...user, isActive: !currentStatus } : user
-        )
-      );
-    } catch (error) {
-      console.error("Error updating user status:", error);
-      alert("Failed to update status. Check console.");
-    } finally {
-      // 4. Tell the UI the loading is done
       setBusyIds((prev) => {
         const next = new Set(prev);
         next.delete(userId);
@@ -135,62 +99,46 @@ export function UsersAdminTable() {
         <table className="min-w-full divide-y divide-zinc-200 text-left text-sm dark:divide-zinc-700">
           <thead className="bg-zinc-50 dark:bg-zinc-800/80">
             <tr>
-              <th scope="col" className="px-4 py-3 font-semibold text-zinc-700 dark:text-zinc-300">
-                User ID
-              </th>
-              <th scope="col" className="px-4 py-3 font-semibold text-zinc-700 dark:text-zinc-300">
-                Name
-              </th>
-              <th scope="col" className="px-4 py-3 font-semibold text-zinc-700 dark:text-zinc-300">
-                Phone
-              </th>
-              <th scope="col" className="px-4 py-3 font-semibold text-zinc-700 dark:text-zinc-300">
-                Active
-              </th>
-              <th scope="col" className="px-4 py-3 font-semibold text-zinc-700 dark:text-zinc-300">
-                Actions
-              </th>
+              <th className="px-4 py-3 font-semibold text-zinc-700 dark:text-zinc-300">User ID</th>
+              <th className="px-4 py-3 font-semibold text-zinc-700 dark:text-zinc-300">Name</th>
+              <th className="px-4 py-3 font-semibold text-zinc-700 dark:text-zinc-300">Phone</th>
+              <th className="px-4 py-3 font-semibold text-zinc-700 dark:text-zinc-300">Active</th>
+              <th className="px-4 py-3 font-semibold text-zinc-700 dark:text-zinc-300">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
-          {users.map((user) => (
-            <tr key={user.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
-              <td className="truncate px-4 py-3 text-sm text-zinc-500 dark:text-zinc-400">
-                {user.id}
-              </td>
-              <td className="px-4 py-3 text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                {user.name || "—"}
-              </td>
-              <td className="px-4 py-3 text-sm text-zinc-500 dark:text-zinc-400">
-                {user.phone || "—"}
-              </td>
-              <td className="px-4 py-3 text-sm">
-                {user.isActive ? (
-                  <span className="inline-flex rounded-full bg-emerald-100 px-2 py-1 text-xs font-semibold text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
-                    Active
-                  </span>
-                ) : (
-                  <span className="inline-flex rounded-full bg-red-100 px-2 py-1 text-xs font-semibold text-red-700 dark:bg-red-900/30 dark:text-red-400">
-                    Inactive
-                  </span>
-                )}
-              </td>
-              <td className="px-4 py-3 text-sm">
-                <button
-                  disabled={busyIds.has(user.id)}
-                  onClick={() => toggleUserStatus(user.id, user.isActive)}
-                  className={`rounded px-3 py-1 text-xs font-semibold text-white shadow-sm transition-colors ${
-                    user.isActive
-                      ? "bg-red-600 hover:bg-red-700" 
-                      : "bg-emerald-600 hover:bg-emerald-700"
-                  } ${busyIds.has(user.id) ? "cursor-not-allowed opacity-50" : ""}`}
-                >
-                  {busyIds.has(user.id) ? "Loading..." : (user.isActive ? "Deactivate" : "Activate")}
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
+            {users.map((user) => (
+              <tr key={user.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
+                <td className="truncate px-4 py-3 text-sm text-zinc-500 dark:text-zinc-400">{user.id}</td>
+                <td className="px-4 py-3 text-sm font-medium text-zinc-900 dark:text-zinc-100">{user.name || "—"}</td>
+                <td className="px-4 py-3 text-sm text-zinc-500 dark:text-zinc-400">{user.phone || "—"}</td>
+                <td className="px-4 py-3 text-sm">
+                  {user.isActive ? (
+                    <span className="inline-flex rounded-full bg-emerald-100 px-2 py-1 text-xs font-semibold text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+                      Active
+                    </span>
+                  ) : (
+                    <span className="inline-flex rounded-full bg-red-100 px-2 py-1 text-xs font-semibold text-red-700 dark:bg-red-900/30 dark:text-red-400">
+                      Inactive
+                    </span>
+                  )}
+                </td>
+                <td className="px-4 py-3 text-sm">
+                  <button
+                    disabled={busyIds.has(user.id)}
+                    onClick={() => toggleUserStatus(user.id, !!user.isActive)}
+                    className={`rounded px-3 py-1 text-xs font-semibold text-white shadow-sm transition-colors ${
+                      user.isActive
+                        ? "bg-red-600 hover:bg-red-700" 
+                        : "bg-emerald-600 hover:bg-emerald-700"
+                    } ${busyIds.has(user.id) ? "cursor-not-allowed opacity-50" : ""}`}
+                  >
+                    {busyIds.has(user.id) ? "Loading..." : (user.isActive ? "Deactivate" : "Activate")}
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
         </table>
       </div>
     </div>
