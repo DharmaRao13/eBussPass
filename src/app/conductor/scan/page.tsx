@@ -116,13 +116,27 @@ export default function ConductorScanPage() {
         </div>
         <p className="text-2xl font-bold tracking-wide">VALID</p>
         {scannedUser && (
-          <div className="mt-5 w-full max-w-md rounded-2xl bg-white/10 p-4 text-sm">
-            <p><span className="font-semibold">Name:</span> {scannedUser.name}</p>
-            <p><span className="font-semibold">Phone:</span> {scannedUser.phone}</p>
-            <p><span className="font-semibold">Email:</span> {scannedUser.email || "—"}</p>
-            <p><span className="font-semibold">College:</span> {scannedUser.college || "—"}</p>
-            <p><span className="font-semibold">User ID:</span> {scannedUser.userId}</p>
-            <p><span className="font-semibold">Expiry:</span> {scannedUser.expiryDate ? new Date(scannedUser.expiryDate).toLocaleString() : "—"}</p>
+          <div className="mt-8 w-full max-w-sm rounded-3xl border border-emerald-700/70 bg-gradient-to-br from-zinc-800 to-zinc-900 p-5 shadow-[0_0_30px_rgba(16,185,129,0.5)] text-left">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.25em] text-emerald-400">Telangana RTC</p>
+                <h3 className="mt-1 text-xl font-extrabold text-white">eBussPass ID</h3>
+              </div>
+              <span className="rounded-full px-3 py-1 text-[10px] font-bold uppercase bg-emerald-500 text-black">
+                Valid
+              </span>
+            </div>
+            <div className="mt-5 space-y-1 text-sm text-zinc-200">
+              <p><span className="text-zinc-400">Name:</span> {scannedUser.name}</p>
+              <p><span className="text-zinc-400">Phone:</span> {scannedUser.phone || "—"}</p>
+              <p><span className="text-zinc-400">College:</span> {scannedUser.college || "—"}</p>
+              <p className="truncate"><span className="text-zinc-400">Pass ID:</span> {scannedUser.userId}</p>
+              <p><span className="text-zinc-400">Expires:</span> {scannedUser.expiryDate ? new Date(scannedUser.expiryDate).toLocaleDateString() : "—"}</p>
+            </div>
+            <div className="mt-4 flex items-center justify-between border-t border-zinc-700 pt-3 text-[11px] text-zinc-400">
+              <span>Role: {scannedUser.status === "approved" ? "commuter" : scannedUser.status}</span>
+              <span>Status: {scannedUser.status}</span>
+            </div>
           </div>
         )}
         <button type="button" onClick={resumeScan} className="mt-10 rounded-full bg-white px-8 py-3 text-sm font-semibold text-emerald-700 shadow">
@@ -142,14 +156,27 @@ export default function ConductorScanPage() {
         </div>
         <p className="text-2xl font-bold tracking-wide">EXPIRED</p>
         {scannedUser && (
-          <div className="mt-5 w-full max-w-md rounded-2xl bg-white/10 p-4 text-sm">
-            <p><span className="font-semibold">Name:</span> {scannedUser.name}</p>
-            <p><span className="font-semibold">Phone:</span> {scannedUser.phone}</p>
-            <p><span className="font-semibold">Email:</span> {scannedUser.email || "—"}</p>
-            <p><span className="font-semibold">College:</span> {scannedUser.college || "—"}</p>
-            <p><span className="font-semibold">User ID:</span> {scannedUser.userId}</p>
-            <p><span className="font-semibold">Approval:</span> {scannedUser.status}</p>
-            <p><span className="font-semibold">Active:</span> {scannedUser.isActive ? "Yes" : "No"}</p>
+          <div className="mt-8 w-full max-w-sm rounded-3xl border border-red-700/70 bg-gradient-to-br from-zinc-800 to-zinc-900 p-5 shadow-[0_0_30px_rgba(220,38,38,0.5)] text-left">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.25em] text-red-400">Telangana RTC</p>
+                <h3 className="mt-1 text-xl font-extrabold text-white">eBussPass ID</h3>
+              </div>
+              <span className="rounded-full px-3 py-1 text-[10px] font-bold uppercase bg-red-600 text-white shadow-lg">
+                Invalid
+              </span>
+            </div>
+            <div className="mt-5 space-y-1 text-sm text-zinc-200">
+              <p><span className="text-zinc-400">Name:</span> {scannedUser.name}</p>
+              <p><span className="text-zinc-400">Phone:</span> {scannedUser.phone || "—"}</p>
+              <p><span className="text-zinc-400">College:</span> {scannedUser.college || "—"}</p>
+              <p className="truncate"><span className="text-zinc-400">Pass ID:</span> {scannedUser.userId}</p>
+              <p><span className="text-zinc-400">Approval:</span> {scannedUser.status}</p>
+            </div>
+            <div className="mt-4 flex items-center justify-between border-t border-zinc-700 pt-3 text-[11px] text-zinc-400">
+              <span>Active: {scannedUser.isActive ? "Yes" : "No"}</span>
+              <span>Status: {scannedUser.status}</span>
+            </div>
           </div>
         )}
         <button type="button" onClick={resumeScan} className="mt-10 rounded-full bg-white px-8 py-3 text-sm font-semibold text-red-700 shadow">

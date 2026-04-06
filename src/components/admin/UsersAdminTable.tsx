@@ -185,8 +185,8 @@ export function UsersAdminTable() {
         <div className="px-4 py-3 text-sm font-semibold text-amber-900 dark:text-amber-300">
           Pending Approvals ({pendingUsers.length})
         </div>
-        <table className="min-w-full divide-y divide-amber-200 text-left text-sm dark:divide-amber-900">
-          <thead className="bg-amber-100/70 dark:bg-amber-900/40">
+        <table className="block md:table min-w-full divide-y divide-amber-200 text-left text-sm dark:divide-amber-900">
+          <thead className="hidden md:table-header-group bg-amber-100/70 dark:bg-amber-900/40">
             <tr>
               <th className="px-4 py-3 font-semibold text-zinc-700 dark:text-zinc-300">User ID</th>
               <th className="px-4 py-3 font-semibold text-zinc-700 dark:text-zinc-300">Name</th>
@@ -195,7 +195,7 @@ export function UsersAdminTable() {
               <th className="px-4 py-3 font-semibold text-zinc-700 dark:text-zinc-300 text-right">Action</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-amber-100 dark:divide-amber-900/50">
+          <tbody className="block md:table-row-group divide-y divide-amber-100 dark:divide-amber-900/50">
             {pendingUsers.length === 0 ? (
               <tr>
                 <td colSpan={5} className="px-4 py-6 text-center text-zinc-500 dark:text-zinc-400">
@@ -204,25 +204,38 @@ export function UsersAdminTable() {
               </tr>
             ) : (
               pendingUsers.map((user) => (
-                <tr key={user.id} className="hover:bg-amber-100/40 dark:hover:bg-amber-900/20">
-                  <td className="px-4 py-3 text-[10px] font-mono text-zinc-500 dark:text-zinc-400 group flex items-center gap-2">
-                    <span>{user.id}</span>
-                    <button 
-                      onClick={() => handleCopy(user.id)}
-                      className="opacity-0 group-hover:opacity-100 p-1 hover:text-emerald-500 transition-all"
-                      title="Copy ID"
-                    >
-                      {copyStatus === user.id ? (
-                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
-                      ) : (
-                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
-                      )}
-                    </button>
+                <tr key={user.id} className="block md:table-row bg-white dark:bg-zinc-950/50 mb-4 rounded-xl border border-amber-200 dark:border-amber-900/50 md:mb-0 md:border-none md:rounded-none p-3 md:p-0 hover:bg-amber-100/40 dark:hover:bg-amber-900/20">
+                  <td className="flex justify-between md:table-cell px-2 py-2 md:px-4 md:py-3 text-xs md:text-[10px] font-mono text-zinc-500 dark:text-zinc-400 group items-center gap-2 border-b md:border-b-0 border-zinc-100 dark:border-zinc-800/50">
+                    <span className="md:hidden font-semibold text-zinc-700 dark:text-zinc-300 uppercase font-sans text-[10px]">User ID</span>
+                    <div className="flex items-center gap-2">
+                      <span>{user.id}</span>
+                      <button 
+                        onClick={() => handleCopy(user.id)}
+                        className="opacity-100 md:opacity-0 group-hover:opacity-100 p-1 hover:text-emerald-500 transition-all"
+                        title="Copy ID"
+                      >
+                        {copyStatus === user.id ? (
+                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                        ) : (
+                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                        )}
+                      </button>
+                    </div>
                   </td>
-                  <td className="px-4 py-3 font-medium text-zinc-900 dark:text-zinc-100">{user.name || "—"}</td>
-                  <td className="px-4 py-3 text-zinc-600 dark:text-zinc-300">{user.phone || "—"}</td>
-                  <td className="px-4 py-3 text-zinc-600 dark:text-zinc-300">{user.college || "—"}</td>
-                  <td className="px-4 py-3 text-right">
+                  <td className="flex justify-between md:table-cell px-2 py-2 md:px-4 md:py-3 font-medium text-zinc-900 dark:text-zinc-100 border-b md:border-b-0 border-zinc-100 dark:border-zinc-800/50">
+                    <span className="md:hidden text-[10px] uppercase font-semibold text-zinc-500">Name</span>
+                    {user.name || "—"}
+                  </td>
+                  <td className="flex justify-between md:table-cell px-2 py-2 md:px-4 md:py-3 text-zinc-600 dark:text-zinc-300 border-b md:border-b-0 border-zinc-100 dark:border-zinc-800/50">
+                    <span className="md:hidden text-[10px] uppercase font-semibold text-zinc-500">Phone</span>
+                    {user.phone || "—"}
+                  </td>
+                  <td className="flex justify-between md:table-cell px-2 py-2 md:px-4 md:py-3 text-zinc-600 dark:text-zinc-300 border-b md:border-b-0 border-zinc-100 dark:border-zinc-800/50">
+                    <span className="md:hidden text-[10px] uppercase font-semibold text-zinc-500">Institute</span>
+                    {user.college || "—"}
+                  </td>
+                  <td className="flex justify-between md:table-cell px-2 py-3 md:px-4 md:py-3 md:text-right">
+                    <span className="md:hidden text-[10px] uppercase font-semibold text-zinc-500 items-center flex">Action</span>
                     <button
                       disabled={busyIds.has(user.id)}
                       onClick={() => void approvePendingUser(user.id)}
@@ -243,8 +256,8 @@ export function UsersAdminTable() {
         <div className="px-4 py-3 text-sm font-semibold text-zinc-800 dark:text-zinc-100">
           All Users ({approvedUsers.length})
         </div>
-        <table className="min-w-full divide-y divide-zinc-200 text-left text-sm dark:divide-zinc-700">
-          <thead className="bg-zinc-50 dark:bg-zinc-800/80">
+        <table className="block md:table min-w-full divide-y divide-zinc-200 text-left text-sm dark:divide-zinc-700">
+          <thead className="hidden md:table-header-group bg-zinc-50 dark:bg-zinc-800/80">
             <tr>
               <th className="px-4 py-3 font-semibold text-zinc-700 dark:text-zinc-300">User ID</th>
               <th className="px-4 py-3 font-semibold text-zinc-700 dark:text-zinc-300">Name</th>
@@ -255,28 +268,44 @@ export function UsersAdminTable() {
               <th className="px-4 py-3 font-semibold text-zinc-700 dark:text-zinc-300 text-right">Action</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
+          <tbody className="block md:table-row-group divide-y divide-zinc-200 dark:divide-zinc-800">
             {approvedUsers.map((user) => (
-              <tr key={user.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
-                <td className="px-4 py-3 text-[10px] font-mono text-zinc-500 dark:text-zinc-400 group flex items-center gap-2">
-                  <span>{user.id}</span>
-                  <button 
-                    onClick={() => handleCopy(user.id)}
-                    className="opacity-0 group-hover:opacity-100 p-1 hover:text-emerald-500 transition-all"
-                    title="Copy ID"
-                  >
-                    {copyStatus === user.id ? (
-                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
-                    ) : (
-                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
-                    )}
-                  </button>
+              <tr key={user.id} className="block md:table-row bg-white dark:bg-zinc-950/30 mb-4 rounded-xl border border-zinc-200 dark:border-zinc-800 md:mb-0 md:border-none md:rounded-none p-3 md:p-0 hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
+                <td className="flex justify-between md:table-cell px-2 py-2 md:px-4 md:py-3 text-xs md:text-[10px] font-mono text-zinc-500 dark:text-zinc-400 group items-center gap-2 border-b md:border-b-0 border-zinc-100 dark:border-zinc-800/50">
+                  <span className="md:hidden font-semibold text-zinc-700 dark:text-zinc-300 uppercase font-sans text-[10px]">User ID</span>
+                  <div className="flex items-center gap-2">
+                    <span>{user.id}</span>
+                    <button 
+                      onClick={() => handleCopy(user.id)}
+                      className="opacity-100 md:opacity-0 group-hover:opacity-100 p-1 hover:text-emerald-500 transition-all"
+                      title="Copy ID"
+                    >
+                      {copyStatus === user.id ? (
+                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                      ) : (
+                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                      )}
+                    </button>
+                  </div>
                 </td>
-                <td className="px-4 py-3 font-medium text-zinc-900 dark:text-zinc-100">{user.name || "—"}</td>
-                <td className="px-4 py-3 text-zinc-500 dark:text-zinc-400">{user.phone || "—"}</td>
-                <td className="px-4 py-3 text-zinc-600 dark:text-zinc-300 capitalize">{user.role || "—"}</td>
-                <td className="px-4 py-3 text-zinc-600 dark:text-zinc-300 capitalize">{user.status || "—"}</td>
-                <td className="px-4 py-3">
+                <td className="flex justify-between md:table-cell px-2 py-2 md:px-4 md:py-3 font-medium text-zinc-900 dark:text-zinc-100 border-b md:border-b-0 border-zinc-100 dark:border-zinc-800/50">
+                  <span className="md:hidden text-[10px] uppercase font-semibold text-zinc-500">Name</span>
+                  {user.name || "—"}
+                </td>
+                <td className="flex justify-between md:table-cell px-2 py-2 md:px-4 md:py-3 text-zinc-500 dark:text-zinc-400 border-b md:border-b-0 border-zinc-100 dark:border-zinc-800/50">
+                  <span className="md:hidden text-[10px] uppercase font-semibold text-zinc-500">Phone</span>
+                  {user.phone || "—"}
+                </td>
+                <td className="flex justify-between md:table-cell px-2 py-2 md:px-4 md:py-3 text-zinc-600 dark:text-zinc-300 capitalize border-b md:border-b-0 border-zinc-100 dark:border-zinc-800/50">
+                  <span className="md:hidden text-[10px] uppercase font-semibold text-zinc-500">Role</span>
+                  {user.role || "—"}
+                </td>
+                <td className="flex justify-between md:table-cell px-2 py-2 md:px-4 md:py-3 text-zinc-600 dark:text-zinc-300 capitalize border-b md:border-b-0 border-zinc-100 dark:border-zinc-800/50">
+                  <span className="md:hidden text-[10px] uppercase font-semibold text-zinc-500">Status</span>
+                  {user.status || "—"}
+                </td>
+                <td className="flex justify-between md:table-cell px-2 py-2 md:px-4 md:py-3 border-b md:border-b-0 border-zinc-100 dark:border-zinc-800/50">
+                  <span className="md:hidden text-[10px] uppercase font-semibold text-zinc-500 flex items-center">Active</span>
                   {user.isActive ? (
                     <span className="inline-flex rounded-full bg-emerald-100 px-2 py-1 text-xs font-semibold text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
                       Active
@@ -287,7 +316,8 @@ export function UsersAdminTable() {
                     </span>
                   )}
                 </td>
-                <td className="px-4 py-3 text-right">
+                <td className="flex justify-between md:table-cell px-2 py-3 md:px-4 md:py-3 md:text-right">
+                  <span className="md:hidden text-[10px] uppercase font-semibold text-zinc-500 flex items-center">Action</span>
                   <button
                     disabled={busyIds.has(user.id)}
                     onClick={() => void toggleUserStatus(user.id, !!user.isActive)}

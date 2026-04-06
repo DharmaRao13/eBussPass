@@ -54,8 +54,7 @@ export function CurrentUserBanner() {
           }}
           className="rounded-full border border-zinc-600 px-3 py-1 text-xs text-zinc-300 transition-colors hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/30"
         >
-          <span className="sm:hidden">Exit</span>
-          <span className="hidden sm:inline">Sign Out</span>
+          Sign out
         </button>
       </div>
     </div>
