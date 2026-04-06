@@ -88,6 +88,7 @@ export default function CommuterDashboard() {
           <div>
             <h2 className="font-bold text-white">{userDoc?.name || "Commuter"}</h2>
             <p className="text-xs text-zinc-500">{userDoc?.phone || "No Phone Number"}</p>
+            <p className="text-xs text-zinc-500">{userDoc?.email || "No Email"}</p>
           </div>
         </div>
 
