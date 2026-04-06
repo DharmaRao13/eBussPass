@@ -6,6 +6,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { doc, onSnapshot } from "firebase/firestore";
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { getFirebaseDb, getFirebaseAuth } from "@/lib/firebase";
+import { CurrentUserBanner } from "@/components/auth/CurrentUserBanner";
 import { RoleGuard } from "@/components/auth/RoleGuard";
 import type { UserProfile } from "@/types/ebuspass";
 
@@ -70,6 +71,7 @@ export default function CommuterDashboard() {
   return (
     <RoleGuard allowedRoles={["commuter", "admin"]}>
       <div className="min-h-screen bg-zinc-900 text-white p-6 font-sans">
+        <CurrentUserBanner />
         <div className="flex justify-between items-center mb-8">
           <Link href="/" className="text-emerald-500 text-xs font-bold uppercase tracking-widest">
             ← Home

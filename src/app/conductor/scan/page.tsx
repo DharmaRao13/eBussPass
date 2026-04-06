@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useRef, useState, useEffect } from "react"; // Added useEffect
 import dynamic from 'next/dynamic'; // Added dynamic import
+import { CurrentUserBanner } from "@/components/auth/CurrentUserBanner";
 import { RoleGuard } from "@/components/auth/RoleGuard";
 
 // --- CHANGE 1: DYNAMIC IMPORT ---
@@ -23,6 +24,12 @@ type ScannedUser = {
   status: "pending" | "approved" | "rejected";
   expiryDate?: string;
 };
+type ScanHistoryItem = {
+  scannedAt: string;
+  status: "Valid" | "Expired";
+  user: ScannedUser | null;
+};
+const HISTORY_KEY = "ebuspass:last_scans";
 
 export default function ConductorScanPage() {
   const [outcome, setOutcome] = useState<ScanOutcome>("scanning");
@@ -65,6 +72,17 @@ export default function ConductorScanPage() {
 
       const data = (await res.json()) as { status?: string; user?: ScannedUser | null };
       setScannedUser(data.user ?? null);
+      if (data.status === "Valid" || data.status === "Expired") {
+        const current: ScanHistoryItem = {
+          scannedAt: new Date().toISOString(),
+          status: data.status,
+          user: data.user ?? null,
+        };
+        const prevRaw = window.localStorage.getItem(HISTORY_KEY);
+        const prev = prevRaw ? (JSON.parse(prevRaw) as ScanHistoryItem[]) : [];
+        const next = [current, ...prev].slice(0, 15);
+        window.localStorage.setItem(HISTORY_KEY, JSON.stringify(next));
+      }
       if (data.status === "Valid") {
         setOutcome("valid");
         setMessage(null);
@@ -144,6 +162,7 @@ export default function ConductorScanPage() {
   return (
     <RoleGuard allowedRoles={["conductor", "admin"]}>
       <div className="mx-auto flex min-h-[80vh] max-w-lg flex-col px-4 py-8 bg-zinc-950 text-white">
+        <CurrentUserBanner />
         <header className="mb-6 text-left">
           <h1 className="text-2xl font-semibold text-white">Conductor Dashboard</h1>
           <p className="text-sm text-zinc-300">High-contrast QR scanner for pass validation</p>
@@ -171,7 +190,7 @@ export default function ConductorScanPage() {
         </p>
 
         <p className="mt-8 text-center text-sm">
-          <Link href="/" className="text-emerald-400 underline">Home</Link>
+          <Link href="/conductor" className="text-emerald-400 underline">Back to Conductor Page</Link>
         </p>
       </div>
     </RoleGuard>
