@@ -6,10 +6,14 @@ import type { Timestamp } from "firebase/firestore";
  */
 export type UserProfile = {
   name: string;
-  photoUrl: string;
+  photoUrl?: string;
   phone: string;
-  /** Account / profile flag; optional for older documents. */
+  email?: string;
+  college?: string;
+  role: "admin" | "conductor" | "commuter";
+  status: "pending" | "approved" | "rejected";
   isActive?: boolean;
+  expiryDate?: Timestamp;
 };
 
 /**

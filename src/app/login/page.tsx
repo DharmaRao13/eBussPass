@@ -9,7 +9,10 @@ import {
   signInWithPopup,
   type AuthError,
 } from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { getFirebaseAuth } from "@/lib/firebase";
+import { getFirebaseDb } from "@/lib/firebase";
+import type { UserProfile } from "@/types/ebuspass";
 
 /**
  * Minimal commuter sign-in (email/password + optional Google for demos).
@@ -32,13 +35,32 @@ export default function LoginPage() {
     return (e as Error)?.message || "Sign-in failed.";
   };
 
+  const navigateByRole = async (uid: string) => {
+    const db = getFirebaseDb();
+    const snap = await getDoc(doc(db, "users", uid));
+    if (!snap.exists()) {
+      router.push("/register");
+      return;
+    }
+    const userData = snap.data() as UserProfile;
+    if (userData.role === "admin") {
+      router.push("/admin/users");
+      return;
+    }
+    if (userData.role === "conductor") {
+      router.push("/conductor");
+      return;
+    }
+    router.push("/commuter");
+  };
+
   const onEmailSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setBusy(true);
     try {
-      await signInWithEmailAndPassword(getFirebaseAuth(), email.trim(), password);
-      router.push("/commuter");
+      const cred = await signInWithEmailAndPassword(getFirebaseAuth(), email.trim(), password);
+      await navigateByRole(cred.user.uid);
     } catch (err) {
       setError(mapAuthError(err));
     } finally {
@@ -51,8 +73,23 @@ export default function LoginPage() {
     setBusy(true);
     try {
       const provider = new GoogleAuthProvider();
-      await signInWithPopup(getFirebaseAuth(), provider);
-      router.push("/commuter");
+      const cred = await signInWithPopup(getFirebaseAuth(), provider);
+      const db = getFirebaseDb();
+      const ref = doc(db, "users", cred.user.uid);
+      const existing = await getDoc(ref);
+      if (!existing.exists()) {
+        await setDoc(ref, {
+          name: cred.user.displayName || "",
+          phone: "",
+          email: cred.user.email || "",
+          college: "",
+          photoUrl: cred.user.photoURL || "",
+          role: "commuter",
+          status: "pending",
+          isActive: false,
+        } satisfies UserProfile);
+      }
+      await navigateByRole(cred.user.uid);
     } catch (err) {
       setError(mapAuthError(err));
     } finally {
@@ -123,6 +160,9 @@ export default function LoginPage() {
       </button>
 
       <p className="mt-8 text-center text-sm text-zinc-500">
+        <Link href="/register" className="mr-4 text-emerald-700 underline dark:text-emerald-400">
+          New commuter? Register
+        </Link>
         <Link href="/" className="text-emerald-700 underline dark:text-emerald-400">
           Back to home
         </Link>

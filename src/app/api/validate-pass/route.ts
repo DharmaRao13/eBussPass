@@ -1,16 +1,16 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { checkPassValidity } from "@/lib/firestore-helpers";
+import { validateAndGetUserDetails } from "@/lib/firestore-helpers";
 import { parseSignedUserId } from "@/lib/qr-token";
 
 type Body = {
-  /** Signed QR payload from the commuter app (`userId.signature`). */
+  /** QR payload. Supports signed userId.signature or raw UID. */
   scannedUserId?: string;
   qrPayload?: string;
 };
 
 /**
  * POST /api/validate-pass
- * Verifies the signed commuter token, loads Firestore pass, returns { status: 'Valid' | 'Expired' }.
+ * Validates a scanned commuter id against users/{uid} status + expiryDate.
  */
 export async function POST(request: NextRequest) {
   try {
@@ -37,16 +37,14 @@ export async function POST(request: NextRequest) {
           : "";
 
     if (!raw.trim()) {
-      return NextResponse.json({ status: "Expired" as const });
+      return NextResponse.json({ status: "Expired" as const, user: null });
     }
 
-    const userId = parseSignedUserId(raw.trim(), secret);
-    if (!userId) {
-      return NextResponse.json({ status: "Expired" as const });
-    }
+    const parsedSigned = parseSignedUserId(raw.trim(), secret);
+    const userId = parsedSigned ?? raw.trim();
 
-    const status = await checkPassValidity(userId);
-    return NextResponse.json({ status });
+    const result = await validateAndGetUserDetails(userId);
+    return NextResponse.json(result);
   } catch (err) {
     console.error("[validate-pass]", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
