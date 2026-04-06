@@ -8,7 +8,7 @@ import { RoleGuard } from "@/components/auth/RoleGuard";
 export default function AdminUsersPage() {
   return (
     <RoleGuard allowedRoles={["admin"]}>
-      <div className="mx-auto min-h-[70vh] max-w-6xl px-4 py-8">
+      <div className="mx-auto min-h-[70vh] max-w-6xl px-4 pt-8 pb-24">
         <CurrentUserBanner />
         <header className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <div>
@@ -17,12 +17,6 @@ export default function AdminUsersPage() {
               Review pending commuter registrations and manage all users.
             </p>
           </div>
-          <Link
-            href="/"
-            className="text-sm font-medium text-emerald-700 underline dark:text-emerald-400"
-          >
-            Home
-          </Link>
         </header>
         <UsersAdminTable />
       </div>

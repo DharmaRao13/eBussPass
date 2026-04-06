@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { QRCodeSVG } from "qrcode.react";
 import { doc, onSnapshot } from "firebase/firestore";
-import { signOut, onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 import { getFirebaseDb, getFirebaseAuth } from "@/lib/firebase";
 import { CurrentUserBanner } from "@/components/auth/CurrentUserBanner";
 import { RoleGuard } from "@/components/auth/RoleGuard";
@@ -42,10 +42,7 @@ export default function CommuterDashboard() {
     return () => unsubscribe();
   }, [uid, db]);
 
-  const handleLogout = async () => {
-    await signOut(auth);
-    window.location.href = "/";
-  };
+
 
   if (loading) return <div className="min-h-screen bg-black flex items-center justify-center text-zinc-500">Loading...</div>;
 
@@ -69,17 +66,9 @@ export default function CommuterDashboard() {
   const isPending = userDoc?.status === "pending";
 
   return (
-    <RoleGuard allowedRoles={["commuter", "admin"]}>
-      <div className="min-h-screen bg-zinc-900 text-white p-6 font-sans">
+    <RoleGuard allowedRoles={["commuter", "admin", "conductor"]}>
+      <div className="min-h-screen bg-zinc-900 text-white p-6 pb-24 font-sans">
         <CurrentUserBanner />
-        <div className="flex justify-between items-center mb-8">
-          <Link href="/" className="text-emerald-500 text-xs font-bold uppercase tracking-widest">
-            ← Home
-          </Link>
-          <button onClick={handleLogout} className="text-zinc-500 text-xs font-bold uppercase tracking-widest hover:text-red-400">
-            Sign Out
-          </button>
-        </div>
 
         <div className="mx-auto max-w-md space-y-4">
           <div className="rounded-3xl border border-emerald-700/70 bg-gradient-to-br from-zinc-800 to-zinc-900 p-5 shadow-[0_0_30px_rgba(16,185,129,0.15)]">

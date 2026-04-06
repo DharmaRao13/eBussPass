@@ -67,7 +67,7 @@ export default function ConductorDashboardPage() {
 
   return (
     <RoleGuard allowedRoles={["conductor", "admin"]}>
-      <div className="mx-auto min-h-[80vh] max-w-4xl px-4 py-8">
+      <div className="mx-auto min-h-[80vh] max-w-4xl px-4 pt-8 pb-24">
         <CurrentUserBanner />
         <header className="mb-6">
           <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-100">Conductor Dashboard</h1>
