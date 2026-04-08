@@ -35,11 +35,11 @@ export default function ConductorScanPage() {
   const [outcome, setOutcome] = useState<ScanOutcome>("scanning");
   const [message, setMessage] = useState<string | null>(null);
   const [scannedUser, setScannedUser] = useState<ScannedUser | null>(null);
-  
+
   // --- CHANGE 2: MOUNTING GUARD ---
   // We use this to wait until the browser window is 100% ready.
   const [isMounted, setIsMounted] = useState(false);
-  
+
   const lastSent = useRef<string>("");
   const cooldown = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -71,19 +71,40 @@ export default function ConductorScanPage() {
       }
 
       const data = (await res.json()) as { status?: string; user?: ScannedUser | null };
-      setScannedUser(data.user ?? null);
-      if (data.status === "Valid" || data.status === "Expired") {
-        const current: ScanHistoryItem = {
-          scannedAt: new Date().toISOString(),
-          status: data.status,
-          user: data.user ?? null,
-        };
-        const prevRaw = window.localStorage.getItem(HISTORY_KEY);
-        const prev = prevRaw ? (JSON.parse(prevRaw) as ScanHistoryItem[]) : [];
-        const next = [current, ...prev].slice(0, 15);
-        window.localStorage.setItem(HISTORY_KEY, JSON.stringify(next));
+      const fetchedUser = data.user ?? null;
+      setScannedUser(fetchedUser);
+
+      // --- 1. NEW STRICT VALIDATION LOGIC ---
+      let finalStatus: "Valid" | "Expired" = "Expired"; // Default to expired for safety
+
+      if (fetchedUser) {
+        let isExpired = true;
+
+        if (fetchedUser.expiryDate) {
+          // Parse the date string returned by the API
+          const expiryTime = new Date(fetchedUser.expiryDate).getTime();
+          isExpired = Date.now() >= expiryTime;
+        }
+
+        // Pass MUST be active, NOT expired, and approved by an admin
+        const isValid = fetchedUser.isActive === true && !isExpired && fetchedUser.status === "approved";
+        finalStatus = isValid ? "Valid" : "Expired";
       }
-      if (data.status === "Valid") {
+      // --- END NEW LOGIC ---
+
+      // 2. Save to history using our new strictly calculated finalStatus
+      const current: ScanHistoryItem = {
+        scannedAt: new Date().toISOString(),
+        status: finalStatus,
+        user: fetchedUser,
+      };
+      const prevRaw = window.localStorage.getItem(HISTORY_KEY);
+      const prev = prevRaw ? (JSON.parse(prevRaw) as ScanHistoryItem[]) : [];
+      const next = [current, ...prev].slice(0, 15);
+      window.localStorage.setItem(HISTORY_KEY, JSON.stringify(next));
+
+      // 3. Update the Conductor UI
+      if (finalStatus === "Valid") {
         setOutcome("valid");
         setMessage(null);
       } else {
