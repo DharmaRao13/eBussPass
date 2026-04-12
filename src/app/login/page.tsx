@@ -103,7 +103,7 @@ export default function LoginPage() {
         Sign in
       </h1>
       <p className="mb-8 text-center text-sm text-zinc-600 dark:text-zinc-400">
-        Commuter access to eBussPass
+        Commuter access to eBusPass
       </p>
 
       {error && (

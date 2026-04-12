@@ -52,7 +52,7 @@ export default function CommuterDashboard() {
       <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6 text-center space-y-8">
         <div className="space-y-2">
           <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-[0.3em]">Telangana RTC</p>
-          <h1 className="text-4xl font-bold text-white tracking-tight">eBussPass</h1>
+          <h1 className="text-4xl font-bold text-white tracking-tight">eBusPass</h1>
         </div>
         <Link href="/login" className="bg-emerald-500 text-black px-10 py-3 rounded-full font-bold hover:bg-emerald-400">
           Sign In
@@ -75,7 +75,7 @@ export default function CommuterDashboard() {
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-[10px] uppercase tracking-[0.25em] text-emerald-400">Telangana RTC</p>
-                <h3 className="mt-1 text-xl font-extrabold text-white">eBussPass ID</h3>
+                <h3 className="mt-1 text-xl font-extrabold text-white">eBusPass ID</h3>
               </div>
               <span className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase ${
                 isValid ? "bg-emerald-500 text-black" : "bg-red-600 text-white"
@@ -138,7 +138,7 @@ export default function CommuterDashboard() {
               <QRCodeSVG value={uid || ""} size={180} />
             </div>
             <p className="text-[9px] text-center text-zinc-400 leading-relaxed max-w-[200px]">
-              Show this code to the conductor for instant validation via the eBussPass scanner.
+              Show this code to the conductor for instant validation via the eBusPass scanner.
             </p>
           </div>
         </div>

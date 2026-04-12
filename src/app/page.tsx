@@ -8,7 +8,7 @@ export default function Home() {
           Telangana RTC
         </p>
         <h1 className="mb-4 text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-          eBussPass
+          eBusPass
         </h1>
         <p className="mb-10 text-lg leading-relaxed text-zinc-600 dark:text-zinc-400">
           Digitized public transit pass — commuter QR and conductor validation (MVP).

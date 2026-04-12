@@ -141,7 +141,7 @@ export default function ConductorScanPage() {
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-[10px] uppercase tracking-[0.25em] text-emerald-400">Telangana RTC</p>
-                <h3 className="mt-1 text-xl font-extrabold text-white">eBussPass ID</h3>
+                <h3 className="mt-1 text-xl font-extrabold text-white">eBusPass ID</h3>
               </div>
               <span className="rounded-full px-3 py-1 text-[10px] font-bold uppercase bg-emerald-500 text-black">
                 Valid
@@ -181,7 +181,7 @@ export default function ConductorScanPage() {
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-[10px] uppercase tracking-[0.25em] text-red-400">Telangana RTC</p>
-                <h3 className="mt-1 text-xl font-extrabold text-white">eBussPass ID</h3>
+                <h3 className="mt-1 text-xl font-extrabold text-white">eBusPass ID</h3>
               </div>
               <span className="rounded-full px-3 py-1 text-[10px] font-bold uppercase bg-red-600 text-white shadow-lg">
                 Invalid
